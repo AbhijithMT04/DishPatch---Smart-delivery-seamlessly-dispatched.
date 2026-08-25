@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu</title>
+</head>
+<body>
+    <h3>Welcome {{username}}</h3>
+    <br>
+    <a href="{% url 'show_cart' username %}">Go to Cart</a>
+    <br>
+    <table border="1">
+        <thead>
+            <th>Name</th>
+            <th>description</th>
+            <th>price</th>
+            <th>Vegetarian</th>
+            <th>Picture</th>
+            <th>Operation</th>
+        </thead> 
+        <tbody>
+            {% for r in itemList %}
+                <tr>
+                    <td>{{ r.name}}</td>
+                    <td>{{r.description}}</td>
+                    <td>{{ r.price }}</td>
+                    <td>{{ r.vegetarian }}</td>
+                    <td><img src="{{ r.picture }}" alt=""></td>
+                    <td>
+                        <a href="{% url 'add_to_cart' r.id username %}">Add to Cart</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

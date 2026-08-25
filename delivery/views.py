@@ -1,7 +1,11 @@
 from django.http import HttpResponse
 from django.shortcuts import render
 
-from .models import Customer, Restaurant, Item
+from .models import Cart, Customer, Restaurant, Item
+
+import razorpay
+from django.conf import settings
+
 
 # Create your views here.
 
@@ -45,7 +49,8 @@ def signin(request):
         if username == 'admin':
             return render(request, 'admin_home.html')
         else:
-            return render(request, 'customer_home.html')
+            restaurantList = Restaurant.objects.all()
+            return render(request, 'customer_home.html', {"restaurantList": restaurantList, "username": username})
     except Customer.DoesNotExist:
         return render(request, 'fail.html')
 
@@ -115,7 +120,7 @@ def update_menu(request, restaurant_id):
 
     if request.method == 'POST':
         name = request.POST.get('name')
-        description = request.POST.get('description')
+        description = request.POST.get('description') 
         price = request.POST.get('price')
         vegetarian = request.POST.get('vegetarian') == 'on'
         picture = request.POST.get('picture')
@@ -133,3 +138,87 @@ def update_menu(request, restaurant_id):
                 picture = picture
             )
     return render(request, 'show_restaurant.html')
+
+def view_menu(request, restaurant_id, username):
+    restaurant = Restaurant.objects.get(id = restaurant_id)
+    itemList = restaurant.items.all()
+    # itemList = Item.objects.all()
+    return render(request, 'customer_menu.html', {
+        "itemList": itemList,
+        "restaurant": restaurant,
+        "username": username
+    })
+
+def add_to_cart(request, item_id, username):
+    item = Item.objects.get(id = item_id)
+    customer = Customer.objects.get(username = username)
+
+    cart, created = Cart.objects.get_or_create(customer = customer)
+
+    cart.items.add(item)
+    
+    return HttpResponse('added to cart')
+
+def show_cart(request, username):
+    customer = Customer.objects.get(username = username)
+    cart = Cart.objects.filter(customer = customer).first()
+    items = cart.items.all() if cart else []
+    total_price = cart.total_price() if cart else 0
+
+    return render(request, 'cart.html', {"itemList": items, "total_price": total_price, "username": username})
+
+def checkout(request, username):
+    customer = Customer.objects.get(username = username)
+    cart = Cart.objects.filter(customer = customer).first()
+    items = cart.items.all() if cart else []
+    total_price = cart.total_price() if cart else 0
+
+    if total_price == 0:
+        return render(request, 'checkout.html', {'error': 'Your cart is empty'})
+
+    client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+    client.session.trust_env = False        
+
+    order_data = {
+        'amount': int(total_price * 100),  # Amount in paisa
+        'currency': 'INR',
+        'payment_capture': '1',  # Automatically capture payment
+    }
+
+    try:   
+        order = client.order.create(data=order_data)
+    except:
+        # Pass the order details to the frontend
+        return render(request, 'checkout.html', {
+            'username': username,
+            'cart_items': items,
+            'total_price': total_price,
+            'error': 'Payment service is currently unreachable. Please check your internet/proxy settings and try again.'
+        })
+
+    return render(request, 'checkout.html', {
+        'username': username,
+        'cart_items': items,
+        'total_price': total_price,
+        'razorpay_key_id': settings.RAZORPAY_KEY_ID,
+        'order_id': order['id'],  # Razorpay order ID
+        'amount': total_price,
+    })
+
+
+def orders(request, username):
+    customer = get_object_or_404(Customer, username=username)
+    cart = Cart.objects.filter(customer=customer).first()
+
+    cart_items = cart.items.all() if cart else []
+    total_price = cart.total_price() if cart else 0
+
+    if cart:
+        cart.items.clear()
+
+    return render(request, 'orders.html',{
+        'username': username,
+        'customer': customer,
+        'cart_items': items,
+        'total_price': total_price,
+    })
