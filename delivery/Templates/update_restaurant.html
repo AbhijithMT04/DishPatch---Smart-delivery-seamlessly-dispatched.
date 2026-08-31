@@ -1,27 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Update Restaurant</title>
-</head>
-<body>
-    <form action="{% url 'update_restaurant' restaurant.id %}" method="POST">
-    {% csrf_token %}
-         <label for="name">Restaurant Name:</label>
-        <input type="text" name="name" value="{{restaurant.name}}">
-        <br><br>
-        <label for="picture">Picture Url:</label>
-        <input type="text" name="picture" value="{{restaurant.picture}}">
-        <br><br>
-        <label for="cuisine">Cuisine:</label>
-        <input type="text" name="cuisine" value="{{restaurant.cuisine}}">
-        <br><br>
-        <label for="rating">Rating:</label>
-        <input type="number" min="0" max="5" name="rating" value="{{restaurant.rating}}">
-        <br><br>
-        <br><br>
-        <button type="submit">Update Restaurant</button>
-    </form>
-</body>
-</html>
+{% extends 'base.html' %}
+{% block title %}Restaurants{% endblock %}
+{% block nav_right %}
+<a href="open_add_restaurant">Add restaurant</a>
+{% endblock %}
+{% block content %}
+<div class="container">
+    <h1>Restaurants</h1>
+
+    {% for r in restaurantList %}
+        <div class="row-card">
+            <img src="{{ r.picture }}" alt="{{ r.name }}">
+            <div class="info">
+                <div class="name">{{ r.name }}</div>
+                <div class="desc">{{ r.cuisine }} · ★ {{ r.rating }}</div>
+            </div>
+            <div class="actions">
+                <a href="{% url 'open_update_menu' r.id %}" class="btn btn-ghost btn-sm">Menu</a>
+                <a href="{% url 'open_update_restaurant' r.id %}" class="btn btn-ghost btn-sm">Edit</a>
+                <a href="{% url 'delete_restaurant' r.id %}" class="btn btn-danger btn-sm js-confirm-delete">Delete</a>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

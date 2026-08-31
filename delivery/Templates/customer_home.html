@@ -1,34 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>customer page</title>
-</head>
-<body>
-    <h1>Welcome {{username}}</h1>
+{% extends 'base.html' %}
+{% block title %}Restaurants{% endblock %}
+{% block nav_right %}
+<span class="nav-user">Hi, {{ username }}</span>
+{% endblock %}
+{% block content %}
+<div class="container">
+    <h1>Welcome, {{ username }}</h1>
+    <p class="muted">Restaurants near you</p>
 
-    <table border="1">
-    <thead>
-        <th>Restaurant Name</th>
-        <th>Picture</th>
-        <th>Cuisine</th>
-        <th>Rating</th>
-        <th>Operation</th>
-    </thead>
-    <tbody>
+    <div class="grid">
         {% for r in restaurantList %}
-            <tr>
-                <td>{{ r.name}}</td>
-                <td><img src="{{ r.picture }}" alt=""></td>
-                <td>{{r.cuisine}}</td>
-                <td>{{ r.rating }}</td>
-                <td> 
-                    <a href="{% url 'view_menu' r.id username %}">View Menu</a>
-                </td>
-            </tr>
+            <div class="card">
+                <img src="{{ r.picture }}" alt="{{ r.name }}">
+                <div class="card-body">
+                    <div class="card-title">
+                        <span>{{ r.name }}</span>
+                        <span class="badge-rating">★ {{ r.rating }}</span>
+                    </div>
+                    <div class="cuisine">{{ r.cuisine }}</div>
+                    <a href="{% url 'view_menu' r.id username %}" class="btn btn-primary btn-full btn-sm" style="margin-top:14px;">View menu</a>
+                </div>
+            </div>
         {% endfor %}
-    </tbody>
-</table>
-</body>
-</html>
+    </div>
+</div>
+{% endblock %}

@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 
 from .models import Cart, Customer, Restaurant, Item
 
@@ -64,10 +64,10 @@ def add_restaurant(request):
         cuisine = request.POST.get('cuisine')
         rating = request.POST.get('rating')
 
-    try:
-        Restaurant.objects.get(name == name)
-        return HttpResponse("Duplicate restaurant")
-    except:
+    
+        if (Restaurant.objects.filter(name = name).exists()):
+            return HttpResponse("Duplicate restaurant")
+
         Restaurant.objects.create(
             name = name,
             picture = picture,
@@ -137,7 +137,9 @@ def update_menu(request, restaurant_id):
                 vegetarian = vegetarian,
                 picture = picture
             )
-    return render(request, 'show_restaurant.html')
+
+    itemList = restaurant.items.all()
+    return render(request, 'update_menu.html', {"itemList": itemList, "restaurant": restaurant} )
 
 def view_menu(request, restaurant_id, username):
     restaurant = Restaurant.objects.get(id = restaurant_id)

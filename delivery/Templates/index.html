@@ -1,17 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DishPatch</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'style.css' %}">
-</head>
-<body>
+{% extends 'base.html' %}
+{% block title %}DishPatch{% endblock %}
+{% block nav %}{% endblock %}
+{% block content %}
+<div class="hero">
+    <div class="hero-icon">🍽</div>
     <h1>DishPatch - Smart delivery 🚚, seamlessly dispatched.</h1>
-
-    <a href="open_signin">Sign in</a>
-    <br>
-    <a href="open_signup">Sign up</a>
-</body>
-</html>
+    <p>Order from restaurants near you and track it all in one place.</p>
+    <div class="actions">
+        <a href="open_signin" class="btn btn-primary">Sign in</a>
+        <a href="open_signup" class="btn btn-ghost">Sign up</a>
+    </div>
+</div>
+{% endblock %}

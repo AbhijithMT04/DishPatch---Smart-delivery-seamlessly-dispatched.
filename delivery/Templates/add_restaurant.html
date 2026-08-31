@@ -1,27 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>add_restaurant</title>
-</head>
-<body>
-    <form action="{% url 'add_restaurant' %}" method = "POST">
+{% extends 'base.html' %}
+{% block title %}Add restaurant{% endblock %}
+{% block content %}
+<div class="form-card">
+    <h2>Add restaurant</h2>
+    <form action="{% url 'add_restaurant' %}" method="POST">
         {% csrf_token %}
-        <label for="name">Restaurant Name:</label>
-        <input type="text" name="name">
-        <br><br>
-        <label for="picture">Picture Url:</label>
-        <input type="text" name="picture">
-        <br><br>
-        <label for="cuisine">Cuisine:</label>
-        <input type="text" name="cuisine">
-        <br><br>
-        <label for="rating">Rating:</label>
-        <input type="number" min="0" max="5" name="rating">
-        <br><br>
-        <br><br>
-        <button type="submit">Add Restaurant</button>
+        <div class="field">
+            <label for="name">Restaurant name</label>
+            <input type="text" id="name" name="name">
+        </div>
+        <div class="field">
+            <label for="picture">Picture URL</label>
+            <input type="text" id="picture" name="picture">
+        </div>
+        <div class="field">
+            <label for="cuisine">Cuisine</label>
+            <input type="text" id="cuisine" name="cuisine">
+        </div>
+        <div class="field">
+            <label for="rating">Rating</label>
+            <input type="number" id="rating" min="0" max="5" name="rating">
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">Add restaurant</button>
     </form>
-</body>
-</html>
+</div>
+{% endblock %}

@@ -1,15 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>admin home</title>
-</head>
-<body>
-    <h1>Welcome to Admin Home Page</h1>
-    <br>
-    <a href="open_add_restaurant">Add New Restaurant</a>
-    <br>
-    <a href="open_show_restaurant">Show Restaurant</a>
-</body>
-</html>
+{% extends 'base.html' %}
+{% block title %}Admin{% endblock %}
+{% block content %}
+<div class="container" style="max-width:440px;">
+    <h1>Admin</h1>
+    <p class="muted" style="margin-bottom:24px;">Manage your restaurants and menus.</p>
+
+    <a href="open_add_restaurant" style="text-decoration:none;">
+        <div class="card" style="margin-bottom:12px;">
+            <div class="card-body">Add new restaurant</div>
+        </div>
+    </a>
+    <a href="open_show_restaurant" style="text-decoration:none;">
+        <div class="card">
+            <div class="card-body">Manage restaurants</div>
+        </div>
+    </a>
+</div>
+{% endblock %}

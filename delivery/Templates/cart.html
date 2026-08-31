@@ -1,41 +1,34 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h5>Hi {{username}} here are you items</h5>
-    
-    <h4>Total Price: {{total_price}}</h4>
+{% extends 'base.html' %}
+{% block title %}Your cart{% endblock %}
+{% block nav_right %}
+<span class="nav-user">Hi, {{ username }}</span>
+{% endblock %}
+{% block content %}
+<div class="container">
+    <h1>Your cart</h1>
 
-    
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Item Image</th>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Price</th>
-            </tr>
-        </thead>
-        <tbody>
-            {%  for item in itemList %}
-                <tr>
-                    <td>
-                        <img src="{{ item.picture }}">
-                    </td>
-                    <td>{{ item.name }}</td>
-                    <td>{{ item.description }}</td>
-                    <td>{{ item.price }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-        <form action="{% url 'checkout' username %}">
-            <input type="submit" value="CHECK OUT" />
+    {% if itemList %}
+        {% for item in itemList %}
+            <div class="row-card">
+                <img src="{{ item.picture }}" alt="{{ item.name }}">
+                <div class="info">
+                    <div class="name">{{ item.name }}</div>
+                    <div class="desc">{{ item.description }}</div>
+                    <div class="price">₹{{ item.price }}</div>
+                </div>
+            </div>
+        {% endfor %}
+
+        <div class="summary">
+            <span>Total</span>
+            <span>₹{{ total_price }}</span>
+        </div>
+
+        <form action="{% url 'checkout' username %}" style="margin-top:20px;">
+            <button type="submit" class="btn btn-primary btn-full">Checkout</button>
         </form>
-    </table>
-
-</body>
-</html>
+    {% else %}
+        <p class="muted">Nothing here yet — go add something tasty.</p>
+    {% endif %}
+</div>
+{% endblock %}

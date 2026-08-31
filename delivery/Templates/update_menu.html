@@ -1,52 +1,70 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Update Menu</title>
-</head>
-<body>
-    <table border="1">
-        <thead>
-            <th>Name</th>
-            <th>description</th>
-            <th>price</th>
-            <th>Vegetarian</th>
-            <th>Picture</th>
-        </thead> 
-        <tbody>
-            {% for r in itemList %}
-                <tr>
-                    <td>{{ r.name}}</td>
-                    <td>{{r.description}}</td>
-                    <td>{{ r.price }}</td>
-                    <td>{{ r.vegetarian }}</td>
-                    <td><img src="{{ r.picture }}" alt=""></td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+{% extends 'base.html' %}
+{% block title %}Update Menu - {{ restaurant.name }}{% endblock %}
 
-    <h2>Add Menu Item</h2>
-    <form action="{% url 'update_menu'  restaurant.id %}" method = "POST">
-        {% csrf_token %}
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name">
-        <br><br>
-        <label for="description">Description:</label>
-        <textarea  name="description" id="description" required></textarea>
-        <br><br>
-        <label for="price">Price:</label>
-        <input type="number" id="price" name="price">
-        <br><br>
-        <label for="vegetarian">vegetarian:</label>
-        <input type="checkbox" id="vegitarian" name="vegetarian">On
-        <br><br> 
-        <label for="picture">Picture Url:</label>
-        <input type="text" id="picture" name="picture">
-        <br><br>
-        <br><br>
-        <button type="submit">Add Item</button>
-    </form>   
-</body>
-</html>
+{% block content %}
+<div class="container">
+    <h1>Menu for {{ restaurant.name }}</h1>
+
+    <div class="table-responsive">
+        <table border="1" class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                    <th>Vegetarian</th>
+                    <th>Picture</th>
+                </tr>
+            </thead> 
+            <tbody>
+                {% for r in itemList %}
+                    <tr>
+                        <td>{{ r.name }}</td>
+                        <td>{{ r.description }}</td>
+                        <td>{{ r.price }}</td>
+                        <td>{{ r.vegetarian }}</td>
+                        <td><img src="{{ r.picture }}" alt="{{ r.name }}" width="50"></td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="5">No menu items found. Add one below!</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="form-card" style="margin-top: 2rem;">
+        <h2>Add Menu Item</h2>
+        <form action="{% url 'update_menu' restaurant.id %}" method="POST">
+            {% csrf_token %}
+            <div class="field">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            
+            <div class="field">
+                <label for="description">Description:</label>
+                <textarea name="description" id="description" required></textarea>
+            </div>
+
+            <div class="field">
+                <label for="price">Price:</label>
+                <input type="number" id="price" name="price" step="0.01" required>
+            </div>
+
+            <div class="field">
+                <label for="vegetarian">Vegetarian:</label>
+                <input type="checkbox" id="vegetarian" name="vegetarian">
+            </div> 
+
+            <div class="field">
+                <label for="picture">Picture URL:</label>
+                <input type="text" id="picture" name="picture">
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="margin-top: 1rem;">Add Item</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

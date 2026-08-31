@@ -1,11 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h1>Login Failed !</h1>
-</body>
-</html>
+{% extends 'base.html' %}
+{% block title %}Sign in failed{% endblock %}
+{% block nav %}{% endblock %}
+{% block content %}
+<div class="confirm-card">
+    <div class="icon-circle icon-circle--error">✕</div>
+    <h2>Sign in failed</h2>
+    <p class="muted" style="margin-bottom:24px;">Check your username and password and try again.</p>
+    <a href="open_signin" class="btn btn-primary btn-full">Back to sign in</a>
+</div>
+{% endblock %}

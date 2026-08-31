@@ -1,38 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menu</title>
-</head>
-<body>
-    <h3>Welcome {{username}}</h3>
-    <br>
-    <a href="{% url 'show_cart' username %}">Go to Cart</a>
-    <br>
-    <table border="1">
-        <thead>
-            <th>Name</th>
-            <th>description</th>
-            <th>price</th>
-            <th>Vegetarian</th>
-            <th>Picture</th>
-            <th>Operation</th>
-        </thead> 
-        <tbody>
-            {% for r in itemList %}
-                <tr>
-                    <td>{{ r.name}}</td>
-                    <td>{{r.description}}</td>
-                    <td>{{ r.price }}</td>
-                    <td>{{ r.vegetarian }}</td>
-                    <td><img src="{{ r.picture }}" alt=""></td>
-                    <td>
-                        <a href="{% url 'add_to_cart' r.id username %}">Add to Cart</a>
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</body>
-</html>
+{% extends 'base.html' %}
+{% block title %}Menu{% endblock %}
+{% block nav_right %}
+<span class="nav-user">Hi, {{ username }}</span>
+<a href="{% url 'show_cart' username %}">Cart</a>
+{% endblock %}
+{% block content %}
+<div class="container">
+    <h1>Menu</h1>
+
+    {% for r in itemList %}
+        <div class="row-card">
+            <img src="{{ r.picture }}" alt="{{ r.name }}">
+            <div class="info">
+                <div class="name">
+                    {{ r.name }}
+                    {% if r.vegetarian %}<span class="veg-dot"></span>{% endif %}
+                </div>
+                <div class="desc">{{ r.description }}</div>
+                <div class="price">₹{{ r.price }}</div>
+            </div>
+            <div class="actions">
+                <a href="{% url 'add_to_cart' r.id username %}" class="btn btn-primary btn-sm">Add</a>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

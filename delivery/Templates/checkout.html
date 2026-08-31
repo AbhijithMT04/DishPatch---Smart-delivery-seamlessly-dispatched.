@@ -1,70 +1,66 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-    <title>Document</title>
-</head>
-<body>
-     {% if error %}
-        <p style="color: red;">{{ error }}</p>
+{% extends 'base.html' %}
+{% block title %}Checkout{% endblock %}
+{% block extra_head %}
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+{% endblock %}
+{% block nav_right %}
+<span class="nav-user">Hi, {{ username }}</span>
+{% endblock %}
+{% block content %}
+<div class="container" style="max-width:520px;">
+    <h1>Checkout</h1>
+
+    {% if error %}
+        <div class="error-banner">{{ error }}</div>
     {% else %}
+        {% for item in itemList %}
+            <div class="row-card" style="padding:12px 14px;">
+                <div class="info">
+                    <div class="name">{{ item.name }}</div>
+                </div>
+                <div class="price">₹{{ item.price }}</div>
+            </div>
+        {% endfor %}
 
-        <table border="1">
-            <thead>
-                <tr>
-                    <th>Item</th>
-                    <th>Price</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in itemList %}
-                <tr>
-                    <td>{{ item.name }}</td>
-                    <td>₹{{ item.price }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        <h3>Total: ₹{{ total_price }}</h3>
+        <div class="summary">
+            <span>Total</span>
+            <span>₹{{ total_price }}</span>
+        </div>
 
-
-
-        
-
-        <button id="rzp-button">Pay with Razorpay</button>
+        <button id="rzp-button" class="btn btn-primary btn-full" style="margin-top:20px;">Pay with Razorpay</button>
     {% endif %}
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+    var options = {
+        "key": "{{ razorpay_key_id }}",
+        "amount": "{{ total_price|floatformat:2|add:'0.00'|floatformat:2 }}00",
+        "currency": "INR",
+        "name": "DishPatch",
+        "description": "Order Payment",
+        "order_id": "{{ order_id }}",
+        "handler": function (response) {
+            alert("Payment Successful!");
+            window.location.href = "{% url 'orders' username %}";
+        },
+        "prefill": {
+            "name": "{{ username }}",
+            "email": "customer@example.com",
+            "contact": "9999999999"
+        },
+        "theme": {
+            "color": "#8B5CF6"
+        }
+    };
+    var rzp = new Razorpay(options);
 
-
-     <script>
-        var options = {
-            "key": "{{ razorpay_key_id }}",  // Razorpay API key
-            "amount": "{{ total_price|floatformat:2|add:'0.00'|floatformat:2 }}00", // Amount in paisa
-            "currency": "INR",
-            "name": "DishPatch",
-            "description": "Order Payment",
-            "order_id": "{{ order_id }}",  // Razorpay order ID
-            "handler": function (response) {
-                alert("Payment Successful!");
-                // Redirect to the orders page
-                window.location.href = "{% url 'orders' username %}";
-            },
-            "prefill": {
-                "name": "{{ username }}",
-                "email": "customer@example.com",
-                "contact": "9999999999"
-            },
-            "theme": {
-                "color": "#528FF0"
-            }
-        };
-        var rzp = new Razorpay(options);
-    
-        document.getElementById('rzp-button').onclick = function(e) {
+    var rzpButton = document.getElementById('rzp-button');
+    if (rzpButton) {
+        rzpButton.onclick = function (e) {
             rzp.open();
             e.preventDefault();
-        }
-    </script>
-</body>
-</html>
+        };
+    }
+</script>
+{% endblock %}
