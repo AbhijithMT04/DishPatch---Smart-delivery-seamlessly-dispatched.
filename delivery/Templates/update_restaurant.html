@@ -1,25 +1,33 @@
 {% extends 'base.html' %}
-{% block title %}Restaurants{% endblock %}
-{% block nav_right %}
-<a href="open_add_restaurant">Add restaurant</a>
-{% endblock %}
-{% block content %}
-<div class="container">
-    <h1>Restaurants</h1>
+{% block title %}Update Restaurant{% endblock %}
 
-    {% for r in restaurantList %}
-        <div class="row-card">
-            <img src="{{ r.picture }}" alt="{{ r.name }}">
-            <div class="info">
-                <div class="name">{{ r.name }}</div>
-                <div class="desc">{{ r.cuisine }} · ★ {{ r.rating }}</div>
-            </div>
-            <div class="actions">
-                <a href="{% url 'open_update_menu' r.id %}" class="btn btn-ghost btn-sm">Menu</a>
-                <a href="{% url 'open_update_restaurant' r.id %}" class="btn btn-ghost btn-sm">Edit</a>
-                <a href="{% url 'delete_restaurant' r.id %}" class="btn btn-danger btn-sm js-confirm-delete">Delete</a>
-            </div>
+{% block content %}
+<div class="form-card">
+    <h2>Update {{ restaurant.name }}</h2>
+    <form action="{% url 'update_restaurant' restaurant.id %}" method="POST">
+        {% csrf_token %}
+        
+        <div class="field">
+            <label for="name">Restaurant Name</label>
+            <input type="text" id="name" name="name" value="{{ restaurant.name }}" required>
         </div>
-    {% endfor %}
+
+        <div class="field">
+            <label for="picture">Picture URL</label>
+            <input type="text" id="picture" name="picture" value="{{ restaurant.picture }}" required>
+        </div>
+
+        <div class="field">
+            <label for="cuisine">Cuisine</label>
+            <input type="text" id="cuisine" name="cuisine" value="{{ restaurant.cuisine }}" required>
+        </div>
+
+        <div class="field">
+            <label for="rating">Rating</label>
+            <input type="number" id="rating" name="rating" min="0" max="5" value="{{ restaurant.rating }}" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-full" style="margin-top: 1rem;">Update Restaurant</button>
+    </form>
 </div>
 {% endblock %}
