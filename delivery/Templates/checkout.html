@@ -40,9 +40,25 @@
         "name": "DishPatch",
         "description": "Order Payment",
         "order_id": "{{ order_id }}",
-        "handler": function (response) {
-            alert("Payment Successful!");
-            window.location.href = "{% url 'orders' username %}";
+                "handler": function (response) {
+            fetch("{% url 'verify_payment' username %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: new URLSearchParams({
+                    razorpay_order_id: response.razorpay_order_id,
+                    razorpay_payment_id: response.razorpay_payment_id,
+                    razorpay_signature: response.razorpay_signature
+                })
+            }).then(function (res) {
+                if (res.ok) {
+                    window.location.href = "{% url 'orders' username %}";
+                } else {
+                    alert("Payment verification failed. Contact support.");
+                }
+            });
         },
         "prefill": {
             "name": "{{ username }}",

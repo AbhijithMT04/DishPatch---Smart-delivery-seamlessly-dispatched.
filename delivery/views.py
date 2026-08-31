@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 
-from .models import Cart, Customer, Restaurant, Item
+from .models import Cart, Customer, Restaurant, Item, Order
 
 import razorpay
 from django.conf import settings
@@ -176,7 +176,7 @@ def checkout(request, username):
     total_price = cart.total_price() if cart else 0
 
     if total_price == 0:
-        return render(request, 'checkout.html', {'error': 'Your cart is empty'})
+        return render(request, 'checkout.html', {'error': 'Your cart is empty', 'username': username})
 
     client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
     client.session.trust_env = False        
@@ -210,17 +210,39 @@ def checkout(request, username):
 
 def orders(request, username):
     customer = get_object_or_404(Customer, username=username)
-    cart = Cart.objects.filter(customer=customer).first()
+    latest_order = Order.objects.filter(customer=customer).order_by('-created_at').first()
 
-    cart_items = cart.items.all() if cart else []
-    total_price = cart.total_price() if cart else 0
-
-    if cart:
-        cart.items.clear()
-
-    return render(request, 'orders.html',{
+    return render(request, 'orders.html', {
         'username': username,
         'customer': customer,
-        'cart_items': items,
-        'total_price': total_price,
+        'order': latest_order,
     })
+
+
+def verify_payment(request, username):
+    if request.method == 'POST':
+        client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+        params = {
+            'razorpay_order_id': request.POST.get('razorpay_order_id'),
+            'razorpay_payment_id': request.POST.get('razorpay_payment_id'),
+            'razorpay_signature': request.POST.get('razorpay_signature'),
+        }
+        try:
+            client.utility.verify_payment_signature(params)
+        except razorpay.errors.SignatureVerificationError as e:
+            return HttpResponse(f"Signature check failed: {e}", status=400)
+
+        try:
+            customer = Customer.objects.get(username=username)
+            cart = Cart.objects.filter(customer=customer).first()
+            Order.objects.create(
+                customer=customer,
+                total_price=cart.total_price(),
+                payment_id=params['razorpay_payment_id'],
+            )
+            cart.items.clear()
+        except Exception as e:
+            return HttpResponse(f"Order save failed: {e}", status=500)
+
+        return redirect('orders', username)
+    return HttpResponse("Invalid request", status=400)

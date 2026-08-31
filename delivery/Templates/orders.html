@@ -4,16 +4,16 @@
 {% block content %}
 <div class="confirm-card">
     <div class="icon-circle icon-circle--success">✓</div>
-    <h2>Order placed</h2>
-    <p class="muted" style="margin-bottom:4px;">Thanks, {{ username }}! It's on its way.</p>
+    <h2>Order successful!</h2>
+    <p class="muted" style="margin-bottom:24px;">Thank you for your order, {{ username }}!</p>
 
-    <h3 style="margin-top:20px; font-size:0.9375rem;">Delivery address</h3>
-    <p class="muted" style="margin-bottom:24px;">{{ customer.address }}</p>
+    <div class="address-box">
+        <h3 class="address-box-title">Delivery address</h3>
+        <p class="muted">{{ customer.address }}</p>
+    </div>
 
-    {% if cart_items %}
-        <a href="{% url 'customer_menu' cart_items.0.restaurant.id username %}" class="btn btn-primary btn-full">Back to restaurants</a>
-    {% else %}
-        <a href="/" class="btn btn-primary btn-full">Back to home</a>
-    {% endif %}
+    <p class="muted" style="margin:24px 0;">Your meal is being prepared and will be delivered shortly. Enjoy!</p>
+
+    <a href="/" class="btn btn-primary btn-full">Back to home</a>
 </div>
 {% endblock %}
