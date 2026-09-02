@@ -20,7 +20,9 @@
     </div>
     {% endblock %}
 
-    {% block content %}{% endblock %}
+    <div class="content-frame">
+        {% block content %}{% endblock %}
+    </div>
 
     <script src="{% static 'script.js' %}"></script>
     {% block extra_js %}{% endblock %}

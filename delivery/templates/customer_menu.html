@@ -2,7 +2,7 @@
 {% block title %}Menu{% endblock %}
 {% block nav_right %}
 <span class="nav-user">Hi, {{ username }}</span>
-<a href="{% url 'show_cart' username %}">Cart</a>
+<a href="{% url 'show_cart' username %}"><span class="cart-icon">🛒</span> Cart</a>
 {% endblock %}
 {% block content %}
 <div class="container">

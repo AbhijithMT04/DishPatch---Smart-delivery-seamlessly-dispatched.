@@ -2,26 +2,29 @@
 {% block title %}Restaurants{% endblock %}
 {% block nav_right %}
 <span class="nav-user">Hi, {{ username }}</span>
+<a href="{% url 'show_cart' username %}"><span class="cart-icon">🛒</span> Cart</a>
 {% endblock %}
 {% block content %}
-<div class="container">
-    <h1>Welcome, {{ username }}</h1>
-    <p class="muted">Restaurants near you</p>
+<div class="container-bg">
+    <div class="container">
+        <h1>Welcome, {{ username }}</h1>
+        <p class="muted">Restaurants near you</p>
 
-    <div class="grid">
-        {% for r in restaurantList %}
-            <div class="card">
-                <img src="{{ r.picture }}" alt="{{ r.name }}">
-                <div class="card-body">
-                    <div class="card-title">
-                        <span>{{ r.name }}</span>
-                        <span class="badge-rating">★ {{ r.rating }}</span>
+        <div class="grid">
+            {% for r in restaurantList %}
+                <div class="card">
+                    <img src="{{ r.picture }}" alt="{{ r.name }}">
+                    <div class="card-body">
+                        <div class="card-title">
+                            <span>{{ r.name }}</span>
+                            <span class="badge-rating">★ {{ r.rating|floatformat:1 }}</span>
+                        </div>
+                        <div class="cuisine">{{ r.cuisine }}</div>
+                        <a href="{% url 'view_menu' r.id username %}" class="btn btn-primary btn-full btn-sm" style="margin-top:14px;">View menu</a>
                     </div>
-                    <div class="cuisine">{{ r.cuisine }}</div>
-                    <a href="{% url 'view_menu' r.id username %}" class="btn btn-primary btn-full btn-sm" style="margin-top:14px;">View menu</a>
                 </div>
-            </div>
-        {% endfor %}
+            {% endfor %}
+        </div>
     </div>
 </div>
 {% endblock %}
