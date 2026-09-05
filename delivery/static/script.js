@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
   initDeleteConfirm();
   initBackButtons();
   initNavShadow();
+  initAddToCart();
 });
 
 function initDeleteConfirm() {
@@ -43,6 +44,55 @@ function initNavShadow() {
   }
   onScroll();
   window.addEventListener("scroll", onScroll, { passive: true });
+}
+
+function initAddToCart() {
+  document.querySelectorAll(".js-add-to-cart").forEach(function (link) {
+    link.addEventListener("click", function (e) {
+      e.preventDefault();
+
+      var href = link.getAttribute("href");
+      var row = link.closest(".row-card");
+      var nameEl = row ? row.querySelector(".name") : null;
+      var label = link.dataset.itemName || (nameEl ? nameEl.textContent.trim() : "Item");
+      var originalText = link.textContent;
+
+      link.textContent = "Adding…";
+      link.style.pointerEvents = "none";
+
+      fetch(href, { credentials: "same-origin" })
+        .then(function (res) {
+          link.textContent = originalText;
+          link.style.pointerEvents = "";
+          if (res.ok) {
+            showToast(label + " added to cart");
+          } else {
+            window.location.href = href;
+          }
+        })
+        .catch(function () {
+          window.location.href = href;
+        });
+    });
+  });
+}
+
+var toastTimer = null;
+function showToast(message) {
+  var toast = document.querySelector(".dp-toast");
+  if (!toast) {
+    toast = document.createElement("div");
+    toast.className = "dp-toast";
+    toast.innerHTML = '<span class="dp-toast-icon">\u2713</span><span class="dp-toast-text"></span>';
+    document.body.appendChild(toast);
+  }
+  toast.querySelector(".dp-toast-text").textContent = message;
+  toast.classList.add("is-visible");
+
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function () {
+    toast.classList.remove("is-visible");
+  }, 2200);
 }
 
 function showConfirmDialog(opts) {

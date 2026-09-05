@@ -20,7 +20,7 @@
                 <div class="price">₹{{ r.price }}</div>
             </div>
             <div class="actions">
-                <a href="{% url 'add_to_cart' r.id username %}" class="btn btn-primary btn-sm">Add</a>
+                <a href="{% url 'add_to_cart' r.id username %}" class="btn btn-primary btn-sm js-add-to-cart" data-item-name="{{ r.name }}">Add</a>
             </div>
         </div>
     {% endfor %}
