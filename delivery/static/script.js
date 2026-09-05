@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
   initBackButtons();
   initNavShadow();
   initAddToCart();
+  initRemoveFromCart();
 });
 
 function initDeleteConfirm() {
@@ -75,6 +76,66 @@ function initAddToCart() {
         });
     });
   });
+}
+
+function initRemoveFromCart() {
+  document.querySelectorAll(".js-remove-cart-item").forEach(function (link) {
+    link.addEventListener("click", function (e) {
+      e.preventDefault();
+
+      var href = link.getAttribute("href");
+      var row = link.closest(".row-card");
+      var price = parseFloat(link.dataset.price) || 0;
+
+      link.style.pointerEvents = "none";
+
+      fetch(href, { credentials: "same-origin" })
+        .then(function (res) {
+          if (res.ok) {
+            removeCartRow(row, price);
+          } else {
+            link.style.pointerEvents = "";
+            window.location.href = href;
+          }
+        })
+        .catch(function () {
+          window.location.href = href;
+        });
+    });
+  });
+}
+
+function removeCartRow(row, price) {
+  row.style.transition = "opacity 0.2s ease, transform 0.2s ease";
+  row.style.opacity = "0";
+  row.style.transform = "translateX(8px)";
+
+  setTimeout(function () {
+    row.remove();
+    updateCartTotal(-price);
+    checkCartEmpty();
+  }, 200);
+}
+
+function updateCartTotal(delta) {
+  var totalEl = document.getElementById("cart-total");
+  if (!totalEl) return;
+  var current = parseFloat(totalEl.textContent.replace(/[^0-9.-]/g, "")) || 0;
+  var updated = Math.max(0, current + delta);
+  totalEl.textContent = "\u20B9" + updated.toFixed(2);
+}
+
+function checkCartEmpty() {
+  var container = document.getElementById("cart-items");
+  if (!container || container.children.length > 0) return;
+
+  var summary = document.getElementById("cart-summary");
+  var form = document.getElementById("checkout-form");
+  var emptyMsg = document.getElementById("cart-empty-msg");
+
+  if (summary) summary.style.display = "none";
+  if (form) form.style.display = "none";
+  if (emptyMsg) emptyMsg.style.display = "block";
 }
 
 var toastTimer = null;

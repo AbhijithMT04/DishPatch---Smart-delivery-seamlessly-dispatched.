@@ -8,25 +8,32 @@
     <h1>Your cart</h1>
 
     {% if itemList %}
-        {% for item in itemList %}
-            <div class="row-card">
-                <img src="{{ item.picture }}" alt="{{ item.name }}">
-                <div class="info">
-                    <div class="name">{{ item.name }}</div>
-                    <div class="desc">{{ item.description }}</div>
-                    <div class="price">₹{{ item.price }}</div>
+        <div id="cart-items">
+            {% for item in itemList %}
+                <div class="row-card" data-item-id="{{ item.id }}">
+                    <img src="{{ item.picture }}" alt="{{ item.name }}">
+                    <div class="info">
+                        <div class="name">{{ item.name }}</div>
+                        <div class="desc">{{ item.description }}</div>
+                        <div class="price">₹{{ item.price }}</div>
+                    </div>
+                    <div class="actions">
+                        <a href="{% url 'remove_from_cart' item.id username %}" class="btn btn-danger btn-sm js-remove-cart-item" data-price="{{ item.price }}">Remove</a>
+                    </div>
                 </div>
-            </div>
-        {% endfor %}
-
-        <div class="summary">
-            <span>Total</span>
-            <span>₹{{ total_price }}</span>
+            {% endfor %}
         </div>
 
-        <form action="{% url 'checkout' username %}" style="margin-top:20px;">
+        <div class="summary" id="cart-summary">
+            <span>Total</span>
+            <span id="cart-total">₹{{ total_price }}</span>
+        </div>
+
+        <form action="{% url 'checkout' username %}" style="margin-top:20px;" id="checkout-form">
             <button type="submit" class="btn btn-primary btn-full">Checkout</button>
         </form>
+
+        <p class="muted" id="cart-empty-msg" style="display:none;">Nothing here yet — go add something tasty.</p>
     {% else %}
         <p class="muted">Nothing here yet — go add something tasty.</p>
     {% endif %}

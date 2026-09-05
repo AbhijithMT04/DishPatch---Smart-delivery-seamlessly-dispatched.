@@ -161,6 +161,16 @@ def add_to_cart(request, item_id, username):
     
     return HttpResponse('added to cart')
 
+def remove_from_cart(request, item_id, username):
+    item = Item.objects.get(id = item_id)
+    customer = Customer.objects.get(username = username)
+
+    cart = Cart.objects.filter(customer = customer).first()
+    if cart:
+        cart.items.remove(item)
+
+    return HttpResponse('removed from cart')
+
 def show_cart(request, username):
     customer = Customer.objects.get(username = username)
     cart = Cart.objects.filter(customer = customer).first()
